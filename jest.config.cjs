@@ -13,7 +13,7 @@ module.exports = {
   moduleNameMapper: { //Fixes import/export of d3 module by pointing to bundled version of d3
     '^d3$': '<rootDir>/cli/node_modules/d3/dist/d3.js',
   },
-  verbose: true, 
+  verbose: false, 
   silent: false,
   testTimeout: 20000,
 };
