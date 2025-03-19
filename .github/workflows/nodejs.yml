@@ -61,7 +61,7 @@ jobs:
       ## Sonatype SCA Scanning ##
       ###########################
       - name: Sonatype Lifecycle SCA Scan
-        if: github.repository_owner == 'finos'
+        # if: github.repository_owner == 'finos'
         id: evaluate
         uses: sonatype/actions/evaluate@v1
         with:
@@ -75,7 +75,7 @@ jobs:
 
       - name: Save Sonatype SBOM
         uses: sonatype/actions/fetch-sbom@v1
-        if: always() && steps.evaluate.outputs.scan-id
+        if: steps.evaluate.outputs.scan-id
         with:
           iq-server-url: ${{ env.SonatypeUrl }}
           username: ${{ secrets.SONATYPE_SCANNER_USERNAME }}
