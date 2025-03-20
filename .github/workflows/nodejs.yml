@@ -75,7 +75,6 @@ jobs:
           module-exclude: ${{ env.ExcludeDirectory }}
 
       - name: Save Sonatype SBOM
-        if: github.event_name == 'pull_request_target'
         uses: sonatype/actions/fetch-sbom@v1
         if: steps.evaluate.outputs.scan-id
         with:
