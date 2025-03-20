@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
   pull_request_target:
-    branches: [main]
+    types: [opened, synchronize]
 
 env:
   SonatypeUrl: "https://finos.sonatype.app/platform/"
@@ -63,6 +63,7 @@ jobs:
       - name: Sonatype Lifecycle SCA Scan
         # if: github.repository_owner == 'finos'
         id: evaluate
+        if: github.event_name == 'pull_request_target'
         uses: sonatype/actions/evaluate@v1
         with:
           iq-server-url: ${{ env.SonatypeUrl }}
@@ -74,6 +75,7 @@ jobs:
           module-exclude: ${{ env.ExcludeDirectory }}
 
       - name: Save Sonatype SBOM
+        if: github.event_name == 'pull_request_target'
         uses: sonatype/actions/fetch-sbom@v1
         if: steps.evaluate.outputs.scan-id
         with:
