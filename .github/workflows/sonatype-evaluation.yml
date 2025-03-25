@@ -26,47 +26,48 @@ jobs:
                -H "Accept: application/vnd.github.v3+json" \
                https://api.github.com/repos/${{ github.repository }}
 
-      # - name: Get Artifact ID
-      #   id: get_artifact_id
-      #   run: |
-      #     echo "ARTIFACT_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-      #       -H "Accept: application/vnd.github.v3+json" \
-      #       "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.event.workflow_run.id }}/artifacts" \
-      #       | jq -r '.artifacts[] | select(.name=="package-lock").id')" >> ${{ env.ArtifactName }}
+      - name: Get Artifact ID
+        id: get_artifact_id
+        run: |
+          echo "ARTIFACT_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.event.workflow_run.id }}/artifacts" \
+            | jq -r '.artifacts[] | select(.name=="package-lock").id')" >> ${{ env.ArtifactName }}
 
-      # - name: Download Artifact
-      #   run: |
-      #     curl -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-      #       -H "Accept: application/vnd.github.v3+json" \
-      #       "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/${package-lock}/zip" \
-      #       --output artifact.zip
-      #     unzip artifact.zip -d ./artifact       
+      - name: Download Artifact
+        run: |
+          curl -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/${ARTIFACT_ID}/zip" \
+            --output artifact.zip
+          unzip artifact.zip -d ./artifact  
+          ls -al
                
-      - name: 'Download artifact'
-        uses: actions/github-script@v3.1.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            var artifacts = await github.actions.listWorkflowRunArtifacts({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               run_id: ${{github.event.workflow_run.id }}
-            });
+      # - name: 'Download artifact'
+      #   uses: actions/github-script@v3.1.0
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     script: |
+      #       var artifacts = await github.actions.listWorkflowRunArtifacts({
+      #          owner: context.repo.owner,
+      #          repo: context.repo.repo,
+      #          run_id: ${{github.event.workflow_run.id }}
+      #       });
             
-            var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
-              return artifact.name == "package-lock"
-            })[0];
+      #       var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
+      #         return artifact.name == "package-lock"
+      #       })[0];
             
-            var download = await github.actions.downloadArtifact({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               artifact_id: matchArtifact.id,
-               archive_format: 'zip',
-            });
-            var fs = require('fs');
-            fs.writeFileSync('${{github.workspace}}/package-lock.zip', Buffer.from(download.data));
+      #       var download = await github.actions.downloadArtifact({
+      #          owner: context.repo.owner,
+      #          repo: context.repo.repo,
+      #          artifact_id: matchArtifact.id,
+      #          archive_format: 'zip',
+      #       });
+      #       var fs = require('fs');
+      #       fs.writeFileSync('${{github.workspace}}/package-lock.zip', Buffer.from(download.data));
       
-      - run: unzip package-lock.zip
+      # - run: unzip package-lock.zip
       
       - name: Sonatype Lifecycle SCA Scan
         # if: github.repository_owner == 'finos'
