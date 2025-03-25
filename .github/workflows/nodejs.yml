@@ -56,6 +56,11 @@ jobs:
 
       - name: Running Test
         run: npm test
+      
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Upload manifest for evaluation
+          path: package-lock.json
 
   # Semgrep static code analysis
   semgrep:
