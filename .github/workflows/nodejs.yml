@@ -56,7 +56,12 @@ jobs:
 
       # - name: Running Test
       #   run: npm test
-      
+
+      - name: TEST
+        run: |
+          ls -al
+          pwd
+        
       - uses: actions/upload-artifact@v4
         with:
           name: package-lock
