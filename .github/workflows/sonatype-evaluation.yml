@@ -1,4 +1,7 @@
 name: Sonatype Lifecycle Evaluation
+permissions:
+  actions: read
+  contents: read
 
 on:
   workflow_run:
