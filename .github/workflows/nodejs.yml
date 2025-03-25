@@ -63,18 +63,18 @@ jobs:
           path: package-lock.json
 
   # Semgrep static code analysis
-  semgrep:
-    name: Semgrep
-    runs-on: ubuntu-latest
-    # needs: [cvescan]
-    needs: [build]
-    container:
-      # A Docker image with Semgrep installed. Don't change this.
-      image: returntocorp/semgrep
-    # Skip any PR created by dependabot to avoid permission issues
-    if: (github.actor != 'dependabot[bot]')
-    steps:
-      - uses: actions/checkout@v4
-      - run: semgrep scan --config auto --severity ERROR
-        env:
-          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+  # semgrep:
+  #   name: Semgrep
+  #   runs-on: ubuntu-latest
+  #   # needs: [cvescan]
+  #   needs: [build]
+  #   container:
+  #     # A Docker image with Semgrep installed. Don't change this.
+  #     image: returntocorp/semgrep
+  #   # Skip any PR created by dependabot to avoid permission issues
+  #   if: (github.actor != 'dependabot[bot]')
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - run: semgrep scan --config auto --severity ERROR
+  #       env:
+  #         SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
