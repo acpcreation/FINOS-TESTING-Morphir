@@ -57,53 +57,6 @@ jobs:
       - name: Running Test
         run: npm test
 
-      ###########################
-      ## Sonatype SCA Scanning ##
-      ###########################
-      - name: Sonatype Lifecycle SCA Scan
-        # if: github.repository_owner == 'finos'
-        id: evaluate
-        if: github.event_name == 'pull_request_target'
-        uses: sonatype/actions/evaluate@v1
-        with:
-          iq-server-url: ${{ env.SonatypeUrl }}
-          username: ${{ secrets.SONATYPE_SCANNER_USERNAME }}
-          password: ${{ secrets.SONATYPE_SCANNER_PASSWORD }}
-          application-id: ${{ env.SonatypeAppId }}
-          stage: "build"
-          scan-targets: ${{ env.SonatypeScanTarget }}
-          module-exclude: ${{ env.ExcludeDirectory }}
-
-      - name: Save Sonatype SBOM
-        uses: sonatype/actions/fetch-sbom@v1
-        if: steps.evaluate.outputs.scan-id
-        with:
-          iq-server-url: ${{ env.SonatypeUrl }}
-          username: ${{ secrets.SONATYPE_SCANNER_USERNAME }}
-          password: ${{ secrets.SONATYPE_SCANNER_PASSWORD }}
-          application-id: ${{ env.SonatypeAppId }}
-          scan-id: ${{ steps.evaluate.outputs.scan-id }}
-          sbom-standard: spdx
-          sbom-version: 2.3
-          artifact-name: ${{ env.SonatypeAppId }}-bom
-
-  # CVE scanning
-  # cvescan:
-  #   name: CVE Scanning
-  #   runs-on: ubuntu-latest
-  #   needs: [build]
-  #   strategy:
-  #     matrix:
-  #       node-version: [18.x]
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Use Node.js ${{ matrix.node-version }}
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: ${{ matrix.node-version }}
-  #     - run: npm ci
-  #     - run: npx --yes auditjs ossi --whitelist allow-list.json
-
   # Semgrep static code analysis
   semgrep:
     name: Semgrep
