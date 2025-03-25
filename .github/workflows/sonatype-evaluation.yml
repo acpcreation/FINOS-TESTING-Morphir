@@ -13,6 +13,7 @@ env:
   SonatypeAppId: "morphir-elm"
   SonatypeScanTarget: "./package-lock.json"
   ExcludeDirectory: "**/docs/ **/.*'"
+  ArtifactName: ""
     
 jobs:
   scan:
@@ -31,7 +32,15 @@ jobs:
           echo "ARTIFACT_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.event.workflow_run.id }}/artifacts" \
-            | jq -r '.artifacts[] | select(.name=="package-lock").id')" >> $GITHUB_ENV
+            | jq -r '.artifacts[] | select(.name=="package-lock").id')" >> ${{ env.ArtifactName }}
+
+      - name: Download Artifact
+        run: |
+          curl -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/${package-lock}/zip" \
+            --output artifact.zip
+          unzip artifact.zip -d ./artifact       
                
       - name: 'Download artifact'
         uses: actions/github-script@v3.1.0
