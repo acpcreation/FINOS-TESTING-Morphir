@@ -14,7 +14,7 @@ env:
 jobs:
   scan:
     name: Build
-    runs-on: ubuntu
+    runs-on: ubuntu-latest
     steps:
       - name: 'Download artifact'
         uses: actions/github-script@v3.1.0
