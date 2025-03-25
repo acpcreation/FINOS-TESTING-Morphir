@@ -1,6 +1,6 @@
 name: Sonatype Lifecycle Evaluation
 permissions:
-  actions: read
+  actions: write
   contents: write
 
 on:
